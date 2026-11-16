@@ -116,7 +116,7 @@ export default function PracticeClient() {
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 4 }}>
                 {(['luke', 'vader'] as const).map(name => (
                     <Paper key={name} variant="outlined" sx={{
-                        p: 3, borderColor: deck === name ? 'primary.main' : 'divider',
+                        p: 3, bgcolor: '#101b2b', borderColor: deck === name ? 'primary.main' : 'divider',
                         borderWidth: deck === name ? 2 : 1
                     }}>
                         <Typography variant="h5">{name === 'luke' ? 'Luke Skywalker' : 'Darth Vader'}</Typography>

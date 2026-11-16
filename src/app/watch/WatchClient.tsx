@@ -41,7 +41,7 @@ export default function WatchClient() {
             <Typography sx={{ color: 'text.secondary', mb: 3 }}>
                 Watch the same starter bot play both sides of an Eternal, best-of-one match.
             </Typography>
-            <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
+            <Paper variant="outlined" sx={{ p: 3, mb: 3, bgcolor: '#101b2b', borderColor: '#334155' }}>
                 <Typography variant="h5">Luke Skywalker vs Darth Vader</Typography>
                 <Typography sx={{ mt: 1 }}>Original Spark of Rebellion starters</Typography>
                 <Typography sx={{ mt: 2, color: 'text.secondary' }}>
