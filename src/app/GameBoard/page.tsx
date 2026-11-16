@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import React, { useState, useEffect } from 'react';
+import LocalBotStatus from '../practice/LocalBotStatus';
 import { Box, Grid, useMediaQuery } from '@mui/material';
 import ChatDrawer from '../_components/Gameboard/_subcomponents/Overlays/ChatDrawer/ChatDrawer';
 import OpponentCardTray from '../_components/Gameboard/OpponentCardTray/OpponentCardTray';
@@ -162,6 +163,7 @@ const GameBoard = () => {
 
     return (
         <Grid container sx={{ height: '100dvh', overflow: 'hidden' }}>
+            {process.env.NODE_ENV === 'development' && <LocalBotStatus />}
             <Box component="main" sx={styles.mainBoxStyle} data-testid="gameboard-main-box">
                 {/* Opponent Playmat - top half
                 {theirPlaymat && (
