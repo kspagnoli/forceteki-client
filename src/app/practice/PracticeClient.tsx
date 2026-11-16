@@ -139,6 +139,7 @@ export default function PracticeClient() {
                 disabled={busy || (!user && !anonymousUserId)} startIcon={busy ? <CircularProgress size={18} /> : undefined}>
                 {busy ? message : 'Start match'}
             </Button>
+            <Button href="/watch" sx={{ ml: 2 }}>Watch two bots play</Button>
             <Typography variant="body2" sx={{ mt: 3, color: 'text.secondary' }}>
                 This opponent uses simple strategy rules. You can concede or request a rematch from the board.
             </Typography>
