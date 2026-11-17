@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { io, Socket } from 'socket.io-client';
-import { Alert, Box, Button, CircularProgress, Paper, Slider, Typography } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Paper, Slider, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useUser } from '@/app/_contexts/User.context';
 
 const controller = 'http://127.0.0.1:9501';
@@ -14,6 +14,7 @@ export default function PracticeClient() {
     const { user, anonymousUserId } = useUser();
     const { data: session } = useSession();
     const [deck, setDeck] = useState<'luke' | 'vader'>('luke');
+    const [policy, setPolicy] = useState('learned');
     const [delay, setDelay] = useState(1000);
     const [busy, setBusy] = useState(false);
     const [message, setMessage] = useState('');
@@ -45,7 +46,7 @@ export default function PracticeClient() {
             }
             const response = await fetch(controller + '/sessions', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ humanDeck: deck, delay }),
+                body: JSON.stringify({ humanDeck: deck, delay, policy }),
                 signal: AbortSignal.timeout(30000)
             });
             const setup = await response.json();
@@ -131,6 +132,13 @@ export default function PracticeClient() {
                     </Paper>
                 ))}
             </Box>
+            <FormControl fullWidth sx={{ mb: 3 }} disabled={busy}>
+                <InputLabel id="opponent-label">Opponent</InputLabel>
+                <Select labelId="opponent-label" label="Opponent" value={policy} onChange={event => setPolicy(event.target.value)}>
+                    <MenuItem value="learned">Learned model (experimental)</MenuItem>
+                    <MenuItem value="scripted">Scripted bot</MenuItem>
+                </Select>
+            </FormControl>
             <Typography id="bot-pace">Bot thinking time: {(delay / 1000).toFixed(1)} seconds</Typography>
             <Slider aria-labelledby="bot-pace" value={delay} min={250} max={2500} step={250}
                 disabled={busy} onChange={(_, value) => setDelay(value as number)} sx={{ mb: 3 }} />
@@ -141,7 +149,7 @@ export default function PracticeClient() {
             </Button>
             <Button href="/watch" sx={{ ml: 2 }}>Watch two bots play</Button>
             <Typography variant="body2" sx={{ mt: 3, color: 'text.secondary' }}>
-                This opponent uses simple strategy rules. You can concede or request a rematch from the board.
+                The learned model is experimental and uses rules for allocation choices. You can concede or request a rematch from the board.
             </Typography>
         </Box>
     );

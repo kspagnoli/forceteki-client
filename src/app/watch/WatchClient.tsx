@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Alert, Box, Button, CircularProgress, Paper, Slider, Typography } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Paper, Slider, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useUser } from '@/app/_contexts/User.context';
 
 const controller = 'http://127.0.0.1:9502';
@@ -10,6 +10,7 @@ const controller = 'http://127.0.0.1:9502';
 export default function WatchClient() {
     const router = useRouter();
     const { user, anonymousUserId } = useUser();
+    const [mode, setMode] = useState('learned-luke');
     const [delay, setDelay] = useState(1000);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
@@ -23,7 +24,7 @@ export default function WatchClient() {
             }
             const response = await fetch(controller + '/sessions', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ delay }), signal: AbortSignal.timeout(45000)
+                body: JSON.stringify({ delay, mode }), signal: AbortSignal.timeout(45000)
             });
             const setup = await response.json();
             if (!response.ok) throw new Error(setup.error || 'Could not prepare the match.');
@@ -39,7 +40,7 @@ export default function WatchClient() {
             <Typography variant="overline" color="primary">LOCAL SPECTATOR</Typography>
             <Typography variant="h3" component="h1" sx={{ mb: 2 }}>Watch two bots play</Typography>
             <Typography sx={{ color: 'text.secondary', mb: 3 }}>
-                Watch the same starter bot play both sides of an Eternal, best-of-one match.
+                Compare the learned model and scripted bot in an Eternal, best-of-one match.
             </Typography>
             <Paper variant="outlined" sx={{ p: 3, mb: 3, bgcolor: '#101b2b', borderColor: '#334155' }}>
                 <Typography variant="h5">Luke Skywalker vs Darth Vader</Typography>
@@ -48,6 +49,15 @@ export default function WatchClient() {
                     The board opens paused. Press Play when you are ready; pause or change speed at any time.
                 </Typography>
             </Paper>
+            <FormControl fullWidth sx={{ mb: 3 }} disabled={busy}>
+                <InputLabel id="match-mode-label">Players</InputLabel>
+                <Select labelId="match-mode-label" label="Players" value={mode} onChange={event => setMode(event.target.value)}>
+                    <MenuItem value="learned-luke">Learned Luke vs scripted Vader</MenuItem>
+                    <MenuItem value="learned-vader">Scripted Luke vs learned Vader</MenuItem>
+                    <MenuItem value="learned-both">Learned model on both sides</MenuItem>
+                    <MenuItem value="scripted">Scripted bot on both sides</MenuItem>
+                </Select>
+            </FormControl>
             <Typography id="watch-pace">Time per decision: {(delay / 1000).toFixed(2)} seconds</Typography>
             <Slider aria-labelledby="watch-pace" value={delay} min={250} max={2500} step={250}
                 disabled={busy} onChange={(_, value) => setDelay(value as number)} sx={{ mb: 3 }} />

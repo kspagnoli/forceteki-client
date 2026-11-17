@@ -6,7 +6,7 @@ import { Box, Button, Slider, Typography } from '@mui/material';
 
 type WatchState = {
     status: string; message?: string; delay: number;
-    bots: { deck: string; decisions: number; lastDecision: { reason: string } | null }[];
+    bots: { deck: string; policy?: string; decisions: number; lastDecision: { reason: string } | null }[];
 };
 const controller = 'http://127.0.0.1:9502/sessions/';
 
@@ -72,7 +72,7 @@ export default function WatchStatus() {
                 onChangeCommitted={(_, value) => action({ action: 'pace', delay: value })}
                 disabled={!state || state.status === 'ended'} size="small" />
             {state?.bots.map(bot => <Typography key={bot.deck} variant="caption" component="p" sx={{ mb: 0.5 }}>
-                <strong>{bot.deck === 'luke' ? 'Luke' : 'Vader'} ({bot.decisions}): </strong>
+                <strong>{bot.deck === 'luke' ? 'Luke' : 'Vader'} · {bot.policy ?? 'scripted'} ({bot.decisions}): </strong>
                 {bot.lastDecision?.reason ?? 'Waiting to begin'}
             </Typography>)}
             {(error || state?.message) && <Typography variant="caption" component="p">{error || state?.message}</Typography>}

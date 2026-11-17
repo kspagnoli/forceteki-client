@@ -5,7 +5,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/app/_contexts/Game.context';
 
-type BotStatus = { status: string; paused: boolean; decisions: number; message?: string };
+type BotStatus = { policy?: string; status: string; paused: boolean; decisions: number; message?: string };
 
 export default function LocalBotStatus() {
     const router = useRouter();
@@ -60,7 +60,7 @@ export default function LocalBotStatus() {
         }}>
             <Typography variant="caption">
                 {offline ? 'Bot connection unavailable' : status?.paused ? 'Bot paused' :
-                    status?.status === 'ended' ? 'Practice finished' : 'Local bot'}
+                    status?.status === 'ended' ? 'Practice finished' : status?.policy === 'learned' ? 'Learned model' : 'Scripted bot'}
             </Typography>
             {!offline && status?.status !== 'ended' &&
                 <Button size="small" onClick={toggle}>{status?.paused ? 'Resume' : 'Pause'}</Button>}
