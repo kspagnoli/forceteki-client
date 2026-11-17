@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import LocalModelPicker from '@/app/_components/_sharedcomponents/LocalModelPicker';
 import { useRouter } from 'next/navigation';
 import { Alert, Box, Button, CircularProgress, Paper, Slider, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useUser } from '@/app/_contexts/User.context';
@@ -11,6 +12,7 @@ export default function WatchClient() {
     const router = useRouter();
     const { user, anonymousUserId } = useUser();
     const [mode, setMode] = useState('learned-luke');
+    const [modelId, setModelId] = useState('current');
     const [delay, setDelay] = useState(1000);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
@@ -24,7 +26,7 @@ export default function WatchClient() {
             }
             const response = await fetch(controller + '/sessions', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ delay, mode }), signal: AbortSignal.timeout(45000)
+                body: JSON.stringify({ delay, mode, modelId }), signal: AbortSignal.timeout(45000)
             });
             const setup = await response.json();
             if (!response.ok) throw new Error(setup.error || 'Could not prepare the match.');
@@ -58,6 +60,7 @@ export default function WatchClient() {
                     <MenuItem value="scripted">Scripted bot on both sides</MenuItem>
                 </Select>
             </FormControl>
+            {mode !== 'scripted' && <LocalModelPicker controller={controller} value={modelId} onChange={setModelId} disabled={busy} />}
             <Typography id="watch-pace">Time per decision: {(delay / 1000).toFixed(2)} seconds</Typography>
             <Slider aria-labelledby="watch-pace" value={delay} min={250} max={2500} step={250}
                 disabled={busy} onChange={(_, value) => setDelay(value as number)} sx={{ mb: 3 }} />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import LocalModelPicker from '@/app/_components/_sharedcomponents/LocalModelPicker';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { io, Socket } from 'socket.io-client';
@@ -15,6 +16,7 @@ export default function PracticeClient() {
     const { data: session } = useSession();
     const [deck, setDeck] = useState<'luke' | 'vader'>('luke');
     const [policy, setPolicy] = useState('learned');
+    const [modelId, setModelId] = useState('current');
     const [delay, setDelay] = useState(1000);
     const [busy, setBusy] = useState(false);
     const [message, setMessage] = useState('');
@@ -46,7 +48,7 @@ export default function PracticeClient() {
             }
             const response = await fetch(controller + '/sessions', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ humanDeck: deck, delay, policy }),
+                body: JSON.stringify({ humanDeck: deck, delay, policy, modelId }),
                 signal: AbortSignal.timeout(30000)
             });
             const setup = await response.json();
@@ -139,6 +141,7 @@ export default function PracticeClient() {
                     <MenuItem value="scripted">Scripted bot</MenuItem>
                 </Select>
             </FormControl>
+            {policy === 'learned' && <LocalModelPicker controller={controller} value={modelId} onChange={setModelId} disabled={busy} />}
             <Typography id="bot-pace">Bot thinking time: {(delay / 1000).toFixed(1)} seconds</Typography>
             <Slider aria-labelledby="bot-pace" value={delay} min={250} max={2500} step={250}
                 disabled={busy} onChange={(_, value) => setDelay(value as number)} sx={{ mb: 3 }} />

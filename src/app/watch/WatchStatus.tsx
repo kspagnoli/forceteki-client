@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { localModelLabel } from '@/app/_components/_sharedcomponents/localModelLabel';
 import { useRouter } from 'next/navigation';
 import { Box, Button, Slider, Typography } from '@mui/material';
 
 type WatchState = {
-    status: string; message?: string; delay: number;
+    status: string; message?: string; delay: number; model?: { candidateId?: string };
     bots: { deck: string; policy?: string; decisions: number; lastDecision: { reason: string } | null }[];
 };
 const controller = 'http://127.0.0.1:9502/sessions/';
@@ -59,6 +60,7 @@ export default function WatchStatus() {
             bgcolor: 'rgba(12,18,28,0.95)', color: 'white', borderRadius: 1, p: 1.5
         }}>
             <Typography variant="subtitle2">Luke vs Vader · {state?.status ?? 'connecting'}</Typography>
+            {state?.bots.some(bot => bot.policy === 'learned') && <Typography variant="caption" component="p">{localModelLabel(state.model?.candidateId)}</Typography>}
             {state && <Box sx={{ display: 'flex', gap: 1, my: 0.5 }}>
                 {state.status !== 'ended' && <Button size="small" variant="outlined"
                     onClick={() => action({ action: state.status === 'playing' ? 'pause' : 'resume' })}>
